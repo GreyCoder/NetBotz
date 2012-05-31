@@ -3,6 +3,11 @@ from suds.transport.https import HttpAuthenticated
 
 
 def nb_report(ip, uname, pw):
+"""Function to access wsdl information on Netbotz
+
+    This function requires and IP, Username and Password
+    
+"""
     url = 'https://%s/cgi-bin/nbSensorWebServices?wsdl' % ip
     location = 'https://%s/cgi-bin/nbSensorWebServices' % ip
     credentials = dict(username=uname, password=pw)
