@@ -1,5 +1,11 @@
 from suds.client import Client
 from suds.transport.https import HttpAuthenticated
+"""This is a module to get data from a Netbotz device.
+currently it is only a function but I will abstract it to
+a class definition in the future so that you will have a
+netbotz object
+"""
+__version__ = '.00'
 
 
 def nb_report(ip, uname, pw):
