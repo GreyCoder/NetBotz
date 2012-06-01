@@ -36,14 +36,26 @@ def nb_report(ip, uname, pw):
                 print "        " + sensorndx + " = " + \
                 str(client.service.getStateSensor(sensorndx)['ValueIndex'])
 
+
 class NetBotz(object):
     """Netbotz Class requires IP, Username, Password"""
-    def __init__(self,ip,uname,pw):
+    def __init__(self, ip, username, password):
         self.url = 'https://%s/cgi-bin/nbSensorWebServices?wsdl' % ip
         self.location = 'https://%s/cgi-bin/nbSensorWebServices' % ip
-        self.credentials = dict(username=uname, password=pw)
-        self.t = HttpAuthenticated(**credentials)
-        self.client = Client(url, location=location, transport=t)
+        self.credentials = dict(username=username, password=password)
+        self.t = HttpAuthenticated(**self.credentials)
+        self.client = Client(self.url, location=self.location, transport=self.t)
+        self.sensors = {}
+        self.sensors['environment'] = {}
+        for pod in self.client.service.getAllPodIDs()[0]:
+            self.podLocation = self.client.service.getPod(pod)['Label']
+            if len(self.client.service.getAllNumSensorIDsForPod(pod)) != 0:
+                self.sensors['environment'][self.podLocation] = {}
+                #self.sensors['environment'] = {podLocation}
+                #self.sensors['environment'] = {}
+                
+                for sensorndx in self.client.service.getAllNumSensorIDsForPod(pod)[0]:
+                    self.sensors['environment'][self.podLocation][sensorndx] = self.client.service.getNumSensor(sensorndx)['Value']
 
     def nb_report(self):
         for pod in self.client.service.getAllPodIDs()[0]:
