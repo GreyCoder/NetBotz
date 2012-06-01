@@ -47,15 +47,17 @@ class NetBotz(object):
         self.client = Client(self.url, location=self.location, transport=self.t)
         self.sensors = {}
         self.sensors['environment'] = {}
+        self.sensors['state'] = {}
         for pod in self.client.service.getAllPodIDs()[0]:
             self.podLocation = self.client.service.getPod(pod)['Label']
             if len(self.client.service.getAllNumSensorIDsForPod(pod)) != 0:
                 self.sensors['environment'][self.podLocation] = {}
-                #self.sensors['environment'] = {podLocation}
-                #self.sensors['environment'] = {}
-                
                 for sensorndx in self.client.service.getAllNumSensorIDsForPod(pod)[0]:
                     self.sensors['environment'][self.podLocation][sensorndx] = self.client.service.getNumSensor(sensorndx)['Value']
+            if len(self.client.service.getAllStateSensorIDsForPod(pod)) != 0:
+                self.sensors['state'][self.podLocation] = {}
+                for sensorndx in self.client.service.getAllStateSensorIDsForPod(pod)[0]:
+                    self.sensors['state'][self.podLocation][sensorndx] = self.client.service.getStateSensor(sensorndx)['ValueIndex']
 
     def nb_report(self):
         for pod in self.client.service.getAllPodIDs()[0]:
