@@ -46,18 +46,28 @@ class NetBotz(object):
         self.t = HttpAuthenticated(**self.credentials)
         self.client = Client(self.url, location=self.location, transport=self.t)
         self.sensors = {}
+
+    def initialize_environment(self):
         self.sensors['environment'] = {}
-        self.sensors['state'] = {}
         for pod in self.client.service.getAllPodIDs()[0]:
             self.podLocation = self.client.service.getPod(pod)['Label']
             if len(self.client.service.getAllNumSensorIDsForPod(pod)) != 0:
                 self.sensors['environment'][self.podLocation] = {}
                 for sensorndx in self.client.service.getAllNumSensorIDsForPod(pod)[0]:
                     self.sensors['environment'][self.podLocation][sensorndx] = self.client.service.getNumSensor(sensorndx)['Value']
+
+    def initialize_state(self):
+        self.sensors['state'] = {}
+        for pod in self.client.service.getAllPodIDs()[0]:
+            self.podLocation = self.client.service.getPod(pod)['Label']
             if len(self.client.service.getAllStateSensorIDsForPod(pod)) != 0:
                 self.sensors['state'][self.podLocation] = {}
                 for sensorndx in self.client.service.getAllStateSensorIDsForPod(pod)[0]:
                     self.sensors['state'][self.podLocation][sensorndx] = self.client.service.getStateSensor(sensorndx)['ValueIndex']
+
+    def initialize(self):
+        self.initialize_state()
+        self.initialize_state()
 
     def nb_report(self):
         for pod in self.client.service.getAllPodIDs()[0]:
